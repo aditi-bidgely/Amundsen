@@ -57,7 +57,12 @@ services:
          - PROXY_HOST=bolt://neo4j_amundsen
       command: gunicorn -w 2 --bind :5000 metadata_service.metadata_wsgi
   amundsenfrontend:
-      image: amundsendev/amundsen-frontend:3.1.0
+      build:
+        context: .
+        args:
+          SEARCHSERVICE_BASE: http://amundsensearch:5001
+          METADATASERVICE_BASE: http://amundsenmetadata:5002
+        dockerfile: Dockerfile.frontend.local
       container_name: amundsenfrontend
       depends_on:
         - amundsenmetadata
@@ -66,15 +71,25 @@ services:
         - 5000:5000
       networks:
         - amundsennet
+      volumes:
+        - ./client_secrets.json:/client_secrets.json   
       environment:
-        - SEARCHSERVICE_BASE=http://amundsensearch:5000
-        - METADATASERVICE_BASE=http://amundsenmetadata:5000
-        # Only for easy config-less Quickstart bookmark evalutation. `TestConfig` extends ordinary `LocalConfig` by
-        # defining `AUTH_USER_METHOD` to a hardcoded dummy user in `amundsen_application.tests.test_utils.get_test_user()`
-        # See further docs in https://github.com/amundsen-io/amundsenfrontendlibrary/blob/master/docs/configuration.md#flask
-        # and https://github.com/amundsen-io/amundsenfrontendlibrary/blob/master/docs/configuration.md#authentication
-        - FRONTEND_SVC_CONFIG_MODULE_CLASS=amundsen_application.config.TestConfig
-      command: gunicorn -w 2 --bind :5000 amundsen_application.wsgi
+        - SEARCHSERVICE_BASE=http://amundsensearch:5001
+        - METADATASERVICE_BASE=http://amundsenmetadata:5002
+        - FLASK_APP_MODULE_NAME=flaskoidc
+        - FLASK_APP_CLASS_NAME=FlaskOIDC
+        - FRONTEND_SVC_CONFIG_MODULE_CLASS=amundsen_application.oidc_config.OidcConfig
+        - FLASK_OIDC_WHITELISTED_ENDPOINTS=status,healthcheck,health
+        - SQLALCHEMY_DATABASE_URI=sqlite:///sessions.db
+        - SESSION_TYPE=sqlalchemy
+        - APP_WRAPPER=flaskoidc
+        - APP_WRAPPER_CLASS=FlaskOIDC
+        - OIDC_CLIENT_SECRETS=/client_secrets.json
+        - FLASK_OIDC_CLIENT_SECRETS=/client_secrets.json
+        # Enter google oauth web application's client id and secret key here and uncomment
+        # - FLASK_OIDC_SECRET_KEY=xyx
+        # - GOOGLE_CLIENT_ID=abc
+        # - GOOGLE_CLIENT_SECRET=xyz      
 
 networks:
   amundsennet:

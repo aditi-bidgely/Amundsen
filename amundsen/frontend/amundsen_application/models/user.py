@@ -5,7 +5,7 @@ from typing import Dict, Optional
 
 from amundsen_common.models.user import UserSchema, User
 from flask import current_app as app
-from marshmallow import ValidationError
+from marshmallow import ValidationError, EXCLUDE
 
 
 def _str_no_value(s: Optional[str]) -> bool:
@@ -19,7 +19,7 @@ def _str_no_value(s: Optional[str]) -> bool:
 
 def load_user(user_data: Dict) -> User:
     try:
-        schema = UserSchema()
+        schema = UserSchema(unknown=EXCLUDE)
         # In order to call 'GET_PROFILE_URL' we make sure the user id exists
         if _str_no_value(user_data.get('user_id')):
             user_data['user_id'] = user_data.get('email')

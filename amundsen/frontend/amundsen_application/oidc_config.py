@@ -2,11 +2,26 @@
 # SPDX-License-Identifier: Apache-2.0
 import json
 
+import logging
+import os
+
 from typing import Dict, Optional
 from flask import Flask, session
 from amundsen_application.config import LocalConfig
 from amundsen_application.models.user import load_user, User
+from authlib.integrations.flask_client import OAuth
 
+LOGGER = logging.getLogger(__name__)
+CONF_URL = 'https://accounts.google.com/.well-known/openid-configuration'
+
+oauth = OAuth()
+oauth.register(
+    name='google',
+    server_metadata_url=CONF_URL,
+    client_kwargs={
+        'scope': 'openid email profile'
+    }
+)
 
 def get_access_headers(app: Flask) -> Optional[Dict]:
     """
@@ -33,10 +48,16 @@ def get_auth_user(app: Flask) -> User:
     :param app: The instance of the current app.
     :return: A class UserInfo (Note, there isn't a UserInfo class, so we use Any)
     """
-    user_info = load_user(session.get("user"))
+    user = session['user']
+    user_info = load_user(user)
+    LOGGER.debug('USER DICT FROM SESSION {}'.format(user))
+    LOGGER.debug('USER INFO {}'.format(user_info))
     return user_info
 
 
 class OidcConfig(LocalConfig):
+    GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', 'some-google-client-id')
+    GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET', 'some-google-client-secret')
+
     AUTH_USER_METHOD = get_auth_user
     REQUEST_HEADERS_METHOD = get_access_headers

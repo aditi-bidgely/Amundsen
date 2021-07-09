@@ -7,6 +7,8 @@ import logging
 import logging.config
 import os
 import sys
+import warnings
+
 
 from flask import Flask, Blueprint
 from flask_restful import Api
@@ -22,6 +24,7 @@ from amundsen_application.api.preview.v0 import preview_blueprint
 from amundsen_application.api.search.v0 import search_blueprint
 from amundsen_application.api.preview.dashboard.v0 import dashboard_preview_blueprint
 from amundsen_application.api.issue.issue import IssueAPI, IssuesAPI
+from amundsen_application.oidc_config import oauth
 
 # For customized flask use below arguments to override.
 
@@ -94,5 +97,6 @@ def create_app(config_module_class: str = None, template_folder: str = None) -> 
     # handles the deprecation warnings
     # and process any config/environment variables accordingly
     process_deprecations(app)
+    oauth.init_app(app)
 
     return app
