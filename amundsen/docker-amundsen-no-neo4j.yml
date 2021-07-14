@@ -76,15 +76,8 @@ services:
         - APP_WRAPPER_CLASS=FlaskOIDC
         - OIDC_CLIENT_SECRETS=/client_secrets.json
         - FLASK_OIDC_CLIENT_SECRETS=/client_secrets.json
-        - FLASK_OIDC_SECRET_KEY=jgDn4-r9_XdEgK6U82rCuL_2
-        - GOOGLE_CLIENT_ID=168332283266-3qaabrhtuscir0gs4jufjiv53viioura.apps.googleusercontent.com
-        - GOOGLE_CLIENT_SECRET=jgDn4-r9_XdEgK6U82rCuL_2
-        # - FLASK_OIDC_SECRET_KEY="$$(jq -r '.web.client_secret' "/client_secrets.json")"
-        # - GOOGLE_CLIENT_ID="$$(jq -r '.web.client_id' "./client_secrets.json")"
-        # - GOOGLE_CLIENT_SECRET="$$(jq -r '.web.client_secret' "/client_secrets.json")"
-
-      # command: bash -c "echo 1111111111111111111111111111111111111111111111111111111111111"
-
+      env_file:
+        - .env
 networks:
   amundsennet:
 
