@@ -1,61 +1,48 @@
 
 version: '3'
 services:
-  neo4j:
-      image: neo4j:3.5.26
-      container_name: neo4j_amundsen
-      environment:
-        - NEO4J_AUTH=neo4j/test
-      ulimits:
-        nofile:
-          soft: 40000
-          hard: 40000
-      ports:
-          - 7474:7474
-          - 7687:7687
-      volumes:
-          - ./example/docker/neo4j/conf:/var/lib/neo4j/conf
-          - ./example/docker/neo4j/plugins:/var/lib/neo4j/plugins
-          - ./example/backup:/backup
-          - neo4j_data:/data
-      networks:
-        - amundsennet
-  elasticsearch:
-      image: elasticsearch:6.7.0
-      container_name: es_amundsen
-      ports:
-          - 9200:9200
-      volumes:
-        - es_data:/usr/share/elasticsearch/data
-      networks:
-        - amundsennet
-      ulimits:
-        nofile:
-          soft: 65536
-          hard: 65536
+  
+  # elasticsearch:
+  #     image: elasticsearch:6.7.0
+  #     container_name: es_amundsen
+  #     ports:
+  #         - 9200:9200
+  #     volumes:
+  #       - es_data:/usr/share/elasticsearch/data
+  #     networks:
+  #       - amundsennet
+  #     ulimits:
+  #       nofile:
+  #         soft: 65536
+  #         hard: 65536
   amundsensearch:
       image: amundsendev/amundsen-search:2.4.1
       container_name: amundsensearch
       ports:
         - 5001:5000
-      depends_on:
-        - elasticsearch
+      # depends_on:
+      #   - elasticsearch
       networks:
         - amundsennet
       environment:
-        - PROXY_ENDPOINT=es_amundsen
+        # - PROXY_ENDPOINT=es_amundsen
+        - PROXY_ENDPOINT=localhost
+      extra_hosts:
+        - localhost:192.168.43.xx
       command: gunicorn -w 2 --bind :5000 search_service.search_wsgi
   amundsenmetadata:
       image: amundsendev/amundsen-metadata:3.3.0
       container_name: amundsenmetadata
-      depends_on:
-        - neo4j
+      # depends_on:
+      #   - neo4j
       ports:
         - 5002:5000
       networks:
         - amundsennet
+      extra_hosts:
+        - localhost:192.168.43.xx
       environment:
-         - PROXY_HOST=bolt://neo4j_amundsen
+         - PROXY_HOST=bolt://localhost
       command: gunicorn -w 2 --bind :5000 metadata_service.metadata_wsgi
   amundsenfrontend:
       build:
@@ -94,7 +81,6 @@ services:
         - FLASK_OIDC_CLIENT_SECRETS=/client_secrets.json
       env_file:
         - .env
-      command: bash -c "echo 1111111111111111111111111111111111111111111111111111111111111"
 
 networks:
   amundsennet:

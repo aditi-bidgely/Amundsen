@@ -1,25 +1,7 @@
 
 version: '3'
 services:
-  neo4j:
-      image: neo4j:3.5.26
-      container_name: neo4j_amundsen
-      environment:
-        - NEO4J_AUTH=neo4j/test
-      ulimits:
-        nofile:
-          soft: 40000
-          hard: 40000
-      ports:
-          - 7474:7474
-          - 7687:7687
-      volumes:
-          - ./example/docker/neo4j/conf:/var/lib/neo4j/conf
-          - ./example/docker/neo4j/plugins:/var/lib/neo4j/plugins
-          - ./example/backup:/backup
-          - neo4j_data:/data
-      networks:
-        - amundsennet
+  
   elasticsearch:
       image: elasticsearch:6.7.0
       container_name: es_amundsen
@@ -48,14 +30,16 @@ services:
   amundsenmetadata:
       image: amundsendev/amundsen-metadata:3.3.0
       container_name: amundsenmetadata
-      depends_on:
-        - neo4j
+      # depends_on:
+      #   - neo4j
       ports:
         - 5002:5000
       networks:
         - amundsennet
+      extra_hosts:
+        - localhost:192.168.43.xx
       environment:
-         - PROXY_HOST=bolt://neo4j_amundsen
+         - PROXY_HOST=bolt://localhost
       command: gunicorn -w 2 --bind :5000 metadata_service.metadata_wsgi
   amundsenfrontend:
       build:
@@ -92,9 +76,14 @@ services:
         - APP_WRAPPER_CLASS=FlaskOIDC
         - OIDC_CLIENT_SECRETS=/client_secrets.json
         - FLASK_OIDC_CLIENT_SECRETS=/client_secrets.json
-      env_file:
-        - .env
-      command: bash -c "echo 1111111111111111111111111111111111111111111111111111111111111"
+        - FLASK_OIDC_SECRET_KEY=jgDn4-r9_XdEgK6U82rCuL_2
+        - GOOGLE_CLIENT_ID=168332283266-3qaabrhtuscir0gs4jufjiv53viioura.apps.googleusercontent.com
+        - GOOGLE_CLIENT_SECRET=jgDn4-r9_XdEgK6U82rCuL_2
+        # - FLASK_OIDC_SECRET_KEY="$$(jq -r '.web.client_secret' "/client_secrets.json")"
+        # - GOOGLE_CLIENT_ID="$$(jq -r '.web.client_id' "./client_secrets.json")"
+        # - GOOGLE_CLIENT_SECRET="$$(jq -r '.web.client_secret' "/client_secrets.json")"
+
+      # command: bash -c "echo 1111111111111111111111111111111111111111111111111111111111111"
 
 networks:
   amundsennet:
