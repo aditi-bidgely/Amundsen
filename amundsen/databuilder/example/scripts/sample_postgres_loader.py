@@ -55,12 +55,14 @@ LOGGER = logging.getLogger(__name__)
 
 
 # todo: connection string needs to change
+# todo: connection string needs to change
 def connection_string():
-    user = 'username'
+    user = 'postgres'
     host = 'localhost'
     port = '5432'
-    db = 'postgres'
-    return "postgresql://%s@%s:%s/%s" % (user, host, port, db)
+    db = 'mydb'
+    password = 'postgres'
+    return "postgresql://%s:%s@%s:%s/%s" % (user, password,host, port, db)
 
 
 def run_postgres_job():
