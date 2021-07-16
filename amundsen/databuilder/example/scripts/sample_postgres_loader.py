@@ -60,10 +60,12 @@ def connection_string():
     user = 'postgres'
     host = 'localhost'
     port = '5432'
-    db = 'mydb'
+    db = 'dvdrental'
     password = 'postgres'
     return "postgresql://%s:%s@%s:%s/%s" % (user, password,host, port, db)
 
+# change this variable to define source
+database_key = 'redshift'
 
 def run_postgres_job():
     where_clause_suffix = textwrap.dedent("""
@@ -75,6 +77,7 @@ def run_postgres_job():
     relationship_files_folder = f'{tmp_folder}/relationships/'
 
     job_config = ConfigFactory.from_dict({
+        f'extractor.postgres_metadata.{PostgresMetadataExtractor.DATABASE_KEY}': database_key,
         f'extractor.postgres_metadata.{PostgresMetadataExtractor.WHERE_CLAUSE_SUFFIX_KEY}': where_clause_suffix,
         f'extractor.postgres_metadata.{PostgresMetadataExtractor.USE_CATALOG_AS_CLUSTER_NAME}': True,
         f'extractor.postgres_metadata.extractor.sqlalchemy.{SQLAlchemyExtractor.CONN_STRING}': connection_string(),
