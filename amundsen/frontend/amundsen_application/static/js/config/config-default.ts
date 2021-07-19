@@ -24,7 +24,7 @@ const configDefault: AppConfig = {
     enabled: false,
   },
   indexUsers: {
-    enabled: false,
+    enabled: true,
   },
   indexFeatures: {
     enabled: false,

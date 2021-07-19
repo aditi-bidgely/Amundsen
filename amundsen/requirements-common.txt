@@ -24,3 +24,6 @@ statsd==3.2.1
 typing==3.6.4
 werkzeug>=2.0.0
 wheel==0.36.2
+
+# flaskoidc
+flaskoidc==1.0.2

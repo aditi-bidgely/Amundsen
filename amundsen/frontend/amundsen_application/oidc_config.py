@@ -7,6 +7,9 @@ from flask import Flask, session
 from amundsen_application.config import LocalConfig
 from amundsen_application.models.user import load_user, User
 
+import logging
+LOGGER = logging.getLogger(__name__)
+
 
 def get_access_headers(app: Flask) -> Optional[Dict]:
     """
@@ -24,6 +27,17 @@ def get_access_headers(app: Flask) -> Optional[Dict]:
         return {}
 
 
+# def get_auth_user(app: Flask) -> User:
+#     """
+#     Retrieves the user information from oidc token, and then makes
+#     a dictionary 'UserInfo' from the token information dictionary.
+#     We need to convert it to a class in order to use the information
+#     in the rest of the Amundsen application.
+#     :param app: The instance of the current app.
+#     :return: A class UserInfo (Note, there isn't a UserInfo class, so we use Any)
+#     """
+#     user_info = load_user(session.get("user"))
+#     return user_info
 def get_auth_user(app: Flask) -> User:
     """
     Retrieves the user information from oidc token, and then makes
@@ -33,7 +47,12 @@ def get_auth_user(app: Flask) -> User:
     :param app: The instance of the current app.
     :return: A class UserInfo (Note, there isn't a UserInfo class, so we use Any)
     """
-    user_info = load_user(session.get("user"))
+    user = session['user']
+    user_info = load_user(user)
+    LOGGER.debug('USER DICT FROM SESSION {}'.format(user))
+    # import pdb
+    # pdb.set_trace()
+    LOGGER.debug('USER INFO {}'.format(user_info))
     return user_info
 
 

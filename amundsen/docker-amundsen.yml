@@ -43,6 +43,10 @@ services:
         - amundsennet
       environment:
         - PROXY_ENDPOINT=es_amundsen
+        - FLASK_APP_MODULE_NAME=flaskoidc
+        - FLASK_APP_CLASS_NAME=FlaskOIDC
+        # - FLASK_OIDC_WHITELISTED_ENDPOINTS=api.healthcheck
+
       command: gunicorn -w 2 --bind :5000 search_service.search_wsgi
   amundsenmetadata:
       image: amundsendev/amundsen-metadata:3.3.0
@@ -54,7 +58,9 @@ services:
       networks:
         - amundsennet
       environment:
-         - PROXY_HOST=bolt://neo4j_amundsen
+        - PROXY_HOST=bolt://neo4j_amundsen
+        - FLASK_APP_MODULE_NAME=flaskoidc
+        - FLASK_APP_CLASS_NAME=FlaskOIDC
       command: gunicorn -w 2 --bind :5000 metadata_service.metadata_wsgi
   amundsenfrontend:
       image: amundsendev/amundsen-frontend:3.1.0
@@ -69,11 +75,17 @@ services:
       environment:
         - SEARCHSERVICE_BASE=http://amundsensearch:5000
         - METADATASERVICE_BASE=http://amundsenmetadata:5000
+        - FLASK_APP_MODULE_NAME=flaskoidc
+        - FLASK_APP_CLASS_NAME=FlaskOIDC
         # Only for easy config-less Quickstart bookmark evalutation. `TestConfig` extends ordinary `LocalConfig` by
         # defining `AUTH_USER_METHOD` to a hardcoded dummy user in `amundsen_application.tests.test_utils.get_test_user()`
         # See further docs in https://github.com/amundsen-io/amundsenfrontendlibrary/blob/master/docs/configuration.md#flask
         # and https://github.com/amundsen-io/amundsenfrontendlibrary/blob/master/docs/configuration.md#authentication
         - FRONTEND_SVC_CONFIG_MODULE_CLASS=amundsen_application.config.TestConfig
+        - FLASK_OIDC_CONFIG_URL=https://accounts.google.com/.well-known/openid-configuration
+        - FLASK_OIDC_REDIRECT_URI=/authorization-code/callback
+      env_file:
+        - .env
       command: gunicorn -w 2 --bind :5000 amundsen_application.wsgi
 
 networks:

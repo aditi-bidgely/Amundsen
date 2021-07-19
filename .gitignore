@@ -1,8 +1,8 @@
 # Docker data files
-example/backup/
-example/docker/neo4j/plugins/
-example/docker/es_data*
-.local/
+*/example/backup/
+*/example/docker/neo4j/plugins/
+*/example/docker/es_data*
+*.local/
 
 # Dev
 .idea/
@@ -55,10 +55,8 @@ coverage
 amundsen-kube-helm/templates/helm/charts/*
 amundsen-kube-helm/templates/helm/requirements.lock
 
-# clients secret json and files for config
-*_secrets.json
-*client_secrets.json
-example/docker/neo4j/conf/*
-*/amundsen_oidc_config.sh
+# nt files
+*.nt
 
-# dist files
+# env files
+*.env*

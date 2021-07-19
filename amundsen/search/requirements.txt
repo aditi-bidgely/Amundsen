@@ -4,3 +4,7 @@
 pyatlasclient==1.0.3
 elasticsearch==6.8.2
 elasticsearch-dsl==6.4.0
+
+# flaskoidc
+flaskoidc==1.0.2
+
