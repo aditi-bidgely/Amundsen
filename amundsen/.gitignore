@@ -60,3 +60,4 @@ amundsen-kube-helm/templates/helm/requirements.lock
 *client_secrets.json
 example/docker/neo4j/conf/*
 */amundsen_oidc_config.sh
+.env

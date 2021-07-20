@@ -74,8 +74,8 @@ services:
       volumes:
         - ./client_secrets.json:/client_secrets.json   
       environment:
-        - SEARCHSERVICE_BASE=http://amundsensearch:5001
-        - METADATASERVICE_BASE=http://amundsenmetadata:5002
+        - SEARCHSERVICE_BASE=http://amundsensearch:5000
+        - METADATASERVICE_BASE=http://amundsenmetadata:5000
         - FLASK_APP_MODULE_NAME=flaskoidc
         - FLASK_APP_CLASS_NAME=FlaskOIDC
         - FRONTEND_SVC_CONFIG_MODULE_CLASS=amundsen_application.oidc_config.OidcConfig
@@ -90,6 +90,8 @@ services:
         # - FLASK_OIDC_SECRET_KEY=xyx
         # - GOOGLE_CLIENT_ID=abc
         # - GOOGLE_CLIENT_SECRET=xyz      
+      env_file:
+        - .env
 
 networks:
   amundsennet:
