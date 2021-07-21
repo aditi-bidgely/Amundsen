@@ -26,6 +26,8 @@ class BasePostgresMetadataExtractor(Extractor):
     Extracts Postgres table and column metadata from underlying meta store database using SQLAlchemyExtractor
     """
 
+    
+
     # CONFIG KEYS
     WHERE_CLAUSE_SUFFIX_KEY = 'where_clause_suffix'
     CLUSTER_KEY = 'cluster_key'
@@ -34,6 +36,9 @@ class BasePostgresMetadataExtractor(Extractor):
 
     # Default values
     DEFAULT_CLUSTER_NAME = 'master'
+
+    # TAGS for the Databse
+    DB_TAGS = 'no_tags_given'
 
     DEFAULT_CONFIG = ConfigFactory.from_dict(
         {WHERE_CLAUSE_SUFFIX_KEY: ' ', CLUSTER_KEY: DEFAULT_CLUSTER_NAME, USE_CATALOG_AS_CLUSTER_NAME: True}
@@ -51,6 +56,9 @@ class BasePostgresMetadataExtractor(Extractor):
         self._cluster = conf.get_string(BasePostgresMetadataExtractor.CLUSTER_KEY)
 
         self._database = conf.get_string(BasePostgresMetadataExtractor.DATABASE_KEY, default='postgres')
+
+        # assign tags
+        self._tags = conf.get_string(BasePostgresMetadataExtractor.DB_TAGS, default=None)
 
         self.sql_stmt = self.get_sql_statement(
             use_catalog_as_cluster_name=conf.get_bool(BasePostgresMetadataExtractor.USE_CATALOG_AS_CLUSTER_NAME),
@@ -93,7 +101,7 @@ class BasePostgresMetadataExtractor(Extractor):
                                 last_row['schema'],
                                 last_row['name'],
                                 last_row['description'],
-                                columns)
+                                columns,tags=self._tags,)
 
     def _get_raw_extract_iter(self) -> Iterator[Dict[str, Any]]:
         """

@@ -53,14 +53,18 @@ neo4j_password = 'test'
 
 LOGGER = logging.getLogger(__name__)
 
+# enter the tags that you want here or leave it blank
+# in case of multiple tags put them like this "tag1,tag2"
+DB_TAGS = ""
 
 # todo: connection string needs to change
 def connection_string():
-    user = 'username'
+    user = 'postgres'
     host = 'localhost'
     port = '5432'
-    db = 'postgres'
-    return "postgresql://%s@%s:%s/%s" % (user, host, port, db)
+    db = 'mydb'
+    password = 'postgres'
+    return "postgresql://%s:%s@%s:%s/%s" % (user, password,host, port, db)
 
 
 def run_postgres_job():
@@ -71,8 +75,8 @@ def run_postgres_job():
     tmp_folder = '/var/tmp/amundsen/table_metadata'
     node_files_folder = f'{tmp_folder}/nodes/'
     relationship_files_folder = f'{tmp_folder}/relationships/'
-
     job_config = ConfigFactory.from_dict({
+        f'extractor.postgres_metadata.{PostgresMetadataExtractor.DB_TAGS}': DB_TAGS,
         f'extractor.postgres_metadata.{PostgresMetadataExtractor.WHERE_CLAUSE_SUFFIX_KEY}': where_clause_suffix,
         f'extractor.postgres_metadata.{PostgresMetadataExtractor.USE_CATALOG_AS_CLUSTER_NAME}': True,
         f'extractor.postgres_metadata.extractor.sqlalchemy.{SQLAlchemyExtractor.CONN_STRING}': connection_string(),
