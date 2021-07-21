@@ -146,7 +146,7 @@ if __name__ == "__main__":
 
     # create_last_updated_job().launch()
 
-    run_csv_job('example/sample_data/sample_user.csv', 'test_user_metadata',
+    run_csv_job('example/sample_data/sample_user_bidgely.csv', 'test_user_metadata',
                 'databuilder.models.user.User')
 
     # job_es_table = create_es_publisher_sample_job(
