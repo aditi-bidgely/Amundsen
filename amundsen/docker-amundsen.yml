@@ -94,7 +94,6 @@ services:
         - FLASK_OIDC_CLIENT_SECRETS=/client_secrets.json
       env_file:
         - .env
-      command: bash -c "echo 1111111111111111111111111111111111111111111111111111111111111"
 
 networks:
   amundsennet:
