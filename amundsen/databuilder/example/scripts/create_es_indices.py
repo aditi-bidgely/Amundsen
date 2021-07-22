@@ -149,12 +149,12 @@ if __name__ == "__main__":
     run_csv_job('example/sample_data/sample_user_bidgely.csv', 'test_user_metadata',
                 'databuilder.models.user.User')
 
-    # job_es_table = create_es_publisher_sample_job(
-    #     elasticsearch_index_alias='table_search_index',
-    #     elasticsearch_doc_type_key='table',
-    #     entity_type='table',
-    #     model_name='databuilder.models.table_elasticsearch_document.TableESDocument')
-    # job_es_table.launch()
+    job_es_table = create_es_publisher_sample_job(
+        elasticsearch_index_alias='table_search_index',
+        elasticsearch_doc_type_key='table',
+        entity_type='table',
+        model_name='databuilder.models.table_elasticsearch_document.TableESDocument')
+    job_es_table.launch()
 
     job_es_user = create_es_publisher_sample_job(
         elasticsearch_index_alias='user_search_index',

@@ -62,3 +62,4 @@ example/docker/neo4j/conf/*
 */amundsen_oidc_config.sh
 
 # dist files
+*.egg
