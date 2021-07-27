@@ -23,6 +23,8 @@ const configCustom: AppConfigCustom = {
   indexFeatures: {
     enabled: false,
   },
+  logoPath: '/static/images/Bidgely-Logo-(White).png',
+  logoTitle: '',
   userIdLabel: 'email address',
   issueTracking: {
     enabled: false,
